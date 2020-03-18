@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.2.xsd">
+
+  <form name="discount-form" title="Discount" model="com.axelor.event.db.Discount">
+    <panel title="Overview">
+      <field name="beforeDays" onChange="action-discount-method-check-beforeddays"/>
+      <field name="discountPercent" onChange="action-discount-record-set-discount-amout"/>
+      <field name="discountAmount" />
+
+    </panel>
+  </form>
+  <grid name="discount-grid" title="Discounts" model="com.axelor.event.db.Discount"
+    edit-icon="true">
+    <field name="beforeDays" />
+    <field name="discountPercent" />
+    <field name="discountAmount" />
+  </grid>
+
+<action-record name="action-discount-record-set-discount-amout" model="com.axelor.event.db.Discount">
+<field name="discountAmount" expr="eval:__parent__.eventFees * discountPercent / 100"/>
+</action-record>
+
+<action-method name="action-discount-method-check-beforeddays">
+<call class="com.axelor.event.web.EventController" method="checkBeforeDays"/>
+</action-method>
+</object-views>

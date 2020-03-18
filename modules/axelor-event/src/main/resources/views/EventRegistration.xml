@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.2.xsd">
+
+  <form name="event-registration-form" title="Event registration"
+    model="com.axelor.event.db.EventRegistration" onSave="action-event-registration-method-check-valid-registration,action-event-registration-method-update-data"  onNew="action-event-registration-attrs-hide-event" onLoad="action-event-registration-attrs-hide-event">
+    <panel title="Overview">
+      <field name="event" onChange="action-event-registration-method-check-valid-registration"/>
+      <field name="name" />
+      <field name="email" onChange="action-event-registration-method-check-email"/>
+      <field name="address" />
+      <field name="registrationDate" onChange="action-event-registration-method-check-registration-date,action-event-registration-method-set-amount"/>
+      <field name="amount"/>
+    </panel>
+  </form>
+  <grid name="event-registration-grid" title="Event registrations"
+    model="com.axelor.event.db.EventRegistration">
+    <field name="event"/>
+    <field name="name" />
+    <field name="email" />
+    <field name="address" />
+    <field name="registrationDate" />
+    <field name="amount" />
+    <field name="isEmailSent"/>
+  </grid>
+   <grid name="event-event-registration-grid" title="Event registrations"
+    model="com.axelor.event.db.EventRegistration">
+    <field name="name" />
+    <field name="email" />
+    <field name="address" />
+    <field name="registrationDate" />
+    <field name="amount" />
+    <field name="isEmailSent" />
+  </grid>
+
+<action-attrs name="action-event-registration-attrs-hide-event">
+<attribute name="hidden" for="event" expr="eval:__parent__"/>
+</action-attrs>
+
+<action-method name="action-event-registration-method-set-amount">
+<call class="com.axelor.event.web.EventRegistrationController" method="setAmount"/>
+</action-method>
+
+<action-method name="action-event-registration-method-update-data">
+<call class="com.axelor.event.web.EventRegistrationController" method="updateEventData"/>
+</action-method>
+
+<action-method name="action-event-registration-method-check-registration-date">
+<call class="com.axelor.event.web.EventRegistrationController" method="checkValidDate"/>
+</action-method>
+
+<action-method name="action-event-registration-method-check-email">
+<call class="com.axelor.event.web.EventRegistrationController" method="validateEmail"/>
+</action-method>
+
+<action-method name="action-event-registration-method-check-valid-registration">
+<call class="com.axelor.event.web.EventRegistrationController" method="checkEventData"/>
+</action-method>
+
+</object-views>

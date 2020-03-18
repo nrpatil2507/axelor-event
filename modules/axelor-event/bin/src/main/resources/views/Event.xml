@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.2.xsd">
+
+  <form name="event-form" title="Event" model="com.axelor.event.db.Event"
+    width="large" onSave="action-event-record-set-total-entry,action-event-method-set-calculated-amount">
+    <toolbar>
+      <button name="importBtn" title="Import Registration" icon="fa-print"
+        onClick="action-event-registration-view-open-import-wizard"
+        readonlyIf="!id" />
+        <button name="sendEmailBtn" title="Send Email" icon="fa-envelope" hideIf="!id" onClick="action-event-method-send-email,save"/>
+        <button name="printReportBtn" title="Print Report" icon="fa-print" hideIf="!id" onClick="action-event-report-print-event-report"/>
+    </toolbar>
+    <panel title="Event Detail">
+      <field name="reference" required="true" />
+      <field name="startDate" onChange="action-event-condition-date-check" />
+      <field name="endDate" onChange="action-event-condition-date-check" />
+      <field name="venue" />
+      <field name="registrationOpen" onChange="action-event-condition-date-check" />
+      <field name="registrationClose" onChange="action-event-condition-date-check" />
+      <field name="capacity" />
+      <field name="eventFees" />
+    </panel>
+    <panel sidebar="true" name="amountPanel">
+      <field name="totalEntry" />
+      <field name="amountColected" />
+      <field name="totalDiscount" />
+    </panel>
+    <panel-related field="discountList" target="com.axelor.event.db.Discount"></panel-related>
+    <panel-related field="eventRegistrationList" canNew="totalEntry &lt; capacity"
+      target="com.axelor.event.db.EventRegistration" onChange="action-event-record-set-total-entry,action-event-method-set-calculated-amount" onNew="action-check-condition-on-new-registration">
+    </panel-related>
+
+    <panel name="descriptionPanel" title="Description">
+      <field name="description" widget="html" colSpan="12" showTitle="false" />
+    </panel>
+  </form>
+
+  <grid name="event-grid" title="Events" model="com.axelor.event.db.Event">
+    <field name="reference" />
+    <field name="startDate" />
+    <field name="endDate" />
+    <field name="venue" />
+    <field name="registrationOpen" />
+    <field name="registrationClose" />
+    <field name="capacity" />
+    <field name="eventFees" />
+    <field name="totalEntry" />
+    <field name="amountColected"/>
+    <field name="totalDiscount"/>
+  </grid>
+
+  <cards name="event-card" model="com.axelor.event.db.Event" title="Events">
+    <field name="startDate" />
+    <field name="endDate" />
+    <field name="venue" />
+    <field name="registrationOpen" />
+    <field name="registrationClose" />
+    <field name="capacity" />
+    <field name="eventFees" />
+    <field name="totalEntry" />
+    <field name="amountCollected" />
+    <field name="totatDiscount" />
+    <template><![CDATA[
+    <div>
+          <strong> Event No.</strong>{{reference}}<br>
+         <abbr ng-if="startDate" title="startDate">Start Date:</abbr><strong> {{startDate}}</strong><br>
+         <abbr ng-if="endDate" title="endDate">End Date:</abbr><strong> {{endDate}}</strong><br>
+          <strong> Venue: </strong>{{venue.fullName}}<br>
+       <strong> Capacity:</strong>{{capacity}}<br>
+       <strong> Event Fees:</strong>{{eventFees}}<br>
+      </div>
+    ]]></template>
+  </cards>
+
+  <calendar name="event-calendar" model="com.axelor.event.db.Event"
+    eventStart="startDate" eventStop="endDate" title="Events" eventLength="1">
+    <field name="reference" />
+  </calendar>
+
+  <form model="com.axelor.event.db.Event" title="Import Data"
+    name="event-registration-import-wizard">
+    <panel name="importDataPanel">
+      <field name="metaFile" title="Select File" target="com.axelor.meta.db.MetaFile"
+        widget="binary-link" type="many-to-one" />
+      <button name="importBtn" title="Import" readonlyIf="metaFile == null"
+        onClick="action-event-method-import-registration-data" />
+    </panel>
+  </form>
+
+  <action-record name="action-event-record-set-total-entry"
+    model="com.axelor.event.db.Event">
+    <field name="totalEntry" expr="eval:eventRegistrationList.size()"
+      if="eventRegistrationList !=null" />
+    <field name="totalEntry" expr="0" if="eventRegistrationList == null" />
+  </action-record>
+
+  <action-condition name="action-event-condition-date-check">
+    <check field="startDate" if="endDate !=null &amp;&amp; startDate &gt; endDate"
+      error="Event Start Date must before from Event End Date" />
+    <check field="endDate" if="endDate !=null &amp;&amp; endDate &lt; startDate"
+      error="Event End Date must after from Event Start Date" />
+    <check field="registrationOpen"
+      if="registrationClose !=null &amp;&amp; registrationOpen &gt; registrationClose"
+      error="Registration Open Date must before from Registration Close Date" />
+      <check field="registrationOpen"
+      if="startDate != null &amp;&amp; registrationOpen &gt; startDate.toLocalDate()"
+      error="Registration Open date must be before Event start date" />
+    <check field="registrationClose"
+      if="startDate != null &amp;&amp; registrationClose &gt; startDate.toLocalDate()"
+      error="Registration Close date must be before Event start date" />
+  </action-condition>
+
+  <action-view name="action-event-registration-view-open-import-wizard"
+    title="Import Data" model="com.axelor.event.db.Event">
+    <view type="form" name="event-registration-import-wizard" />
+    <view-param name="width" value="800" />
+    <view-param name="popup" value="true" />
+    <view-param name="popup" value="reload" />
+    <view-param name="popup-save" value="false" />
+    <view-param name="show-confirm" value="false" />
+    <view-param name="show-toolbar" value="false" />
+  </action-view>
+
+  <action-condition
+    name="action-check-condition-on-new-registration">
+    <check field="capacity"
+      if="evenRegistrationList != null &amp;&amp; eventRegistrationList.size() &gt; capacity"
+      error="Increase the Capacity to register more" />
+  </action-condition>
+
+  <action-method name="action-event-method-import-registration-data">
+    <call class="com.axelor.event.web.EventController" method="importData" />
+  </action-method>
+
+  <action-method name="action-event-method-set-calculated-amount">
+  <call class="com.axelor.event.web.EventController" method="calculateAmounts"/>
+  </action-method>
+
+  <action-method name="action-event-method-send-email">
+  <call class="com.axelor.event.web.EventMessageController" method="sendMailAll"/>
+  </action-method>
+
+  <action-report output="event${date}" name="action-event-report-print-event-report" design="Event_Report.rptdesign">
+  <param name="event" expr="eval: id"/>
+  </action-report>
+
+</object-views>
