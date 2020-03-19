@@ -13,7 +13,7 @@
     <bind to="name" column="name" />
     <bind to="email" column="email" />
     <bind to="registrationDate" column="registrationDate" adapter="DateTime" />
-    <bind to="address">
+    <bind to="address" search="self.id = :event">
     <bind to="flat" column="flat"/>
     <bind to="street" column="street"/>
     <bind to="landMark" column="landMark"/>
