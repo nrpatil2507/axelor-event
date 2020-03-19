@@ -18,39 +18,30 @@ import javax.mail.MessagingException;
 
 public class EventMessageServiceImpl {
 
-  @Inject MessageService messageService;
+	@Inject
+	MessageService messageService;
 
-  public void sendMessageAll(Event event, String model) throws AxelorException, MessagingException {
-    Boolean sentByEmail = true;
-    Long id = event.getId();
-    List<EmailAddress> emailAddressList = new ArrayList<>();
-    for (EventRegistration eventRegistration : event.getEventRegistrationList()) {
-      if (eventRegistration.getIsEmailSent() != true) {
-        EmailAddress emailAddress =
-            Beans.get(EmailAddressRepository.class).findByAddress(eventRegistration.getEmail());
-        emailAddressList.add(emailAddress);
-        eventRegistration.setIsEmailSent(sentByEmail);
-      }
-    }
-    EmailAccount mailAccount =
-        Beans.get(EmailAccountRepository.class).all().filter("self.isDefault=true").fetchOne();
-    if (mailAccount != null) {
-      Message message =
-          messageService.createMessage(
-              model,
-              id.intValue(),
-              "Event Registration detail",
-              "Registration for Event " + event.getReference() + " is SuccessFull",
-              null,
-              null,
-              emailAddressList,
-              null,
-              null,
-              null,
-              null,
-              MessageRepository.MEDIA_TYPE_EMAIL,
-              mailAccount);
-      messageService.sendByEmail(message);
-    }
-  }
+	public void sendMessageAll(Event event, String model) throws AxelorException, MessagingException {
+		Boolean sentByEmail = true;
+		Long id = event.getId();
+		List<EmailAddress> emailAddressList = new ArrayList<>();
+		for (EventRegistration eventRegistration : event.getEventRegistrationList()) {
+			if (eventRegistration.getIsEmailSent() != true) {
+				if (eventRegistration.getEmail() != null) {
+					EmailAddress emailAddress = Beans.get(EmailAddressRepository.class)
+							.findByAddress(eventRegistration.getEmail());
+					emailAddressList.add(emailAddress);
+					eventRegistration.setIsEmailSent(sentByEmail);
+				}
+			}
+		}
+		EmailAccount mailAccount = Beans.get(EmailAccountRepository.class).all().filter("self.isDefault=true")
+				.fetchOne();
+		if (mailAccount != null) {
+			Message message = messageService.createMessage(model, id.intValue(), "Event Registration detail",
+					"Registration for Event " + event.getReference() + " is SuccessFull", null, null, emailAddressList,
+					null, null, null, null, MessageRepository.MEDIA_TYPE_EMAIL, mailAccount);
+			messageService.sendByEmail(message);
+		}
+	}
 }

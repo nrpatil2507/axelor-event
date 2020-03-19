@@ -18,7 +18,7 @@ public class EventMessageController {
       Beans.get(EventMessageServiceImpl.class).sendMessageAll(event, model);
       response.setFlash("send mail successfully");
     } catch (AxelorException e) {
-      response.setNotify("Email is already send");
+      response.setFlash("Something went wrong...!!");
     }
   }
 }

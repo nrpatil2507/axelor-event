@@ -10,7 +10,7 @@
       <field name="name" />
       <field name="email" onChange="action-event-registration-method-check-email"/>
       <field name="address" />
-      <field name="registrationDate" onChange="action-event-registration-method-check-registration-date,action-event-registration-method-set-amount"/>
+      <field name="registrationDate" required="true" onChange="action-event-registration-method-check-registration-date,action-event-registration-method-set-amount"/>
       <field name="amount"/>
     </panel>
   </form>

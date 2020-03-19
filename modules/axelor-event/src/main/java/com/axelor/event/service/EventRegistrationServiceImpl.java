@@ -18,9 +18,6 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
 
 	@Override
 	public BigDecimal setAmount(Event event, EventRegistration eventRegistration) throws Exception {
-		if (eventRegistration.getRegistrationDate() == null) {
-			return event.getEventFees();
-		}
 		LocalDate registrationCloseDate = event.getRegistrationClose();
 		LocalDate eventRegistrationDate = eventRegistration.getRegistrationDate().toLocalDate();
 		BigDecimal amount = event.getEventFees();

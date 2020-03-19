@@ -3,17 +3,10 @@ package com.axelor.event.service;
 import com.axelor.event.db.Discount;
 import com.axelor.event.db.Event;
 import com.axelor.event.db.EventRegistration;
-import com.axelor.event.db.repo.EventRepository;
-import com.google.inject.Inject;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class EventServiceImpl implements EventService {
-
-	@Inject
-	EventRegistrationService eventRegistrationService;
-	@Inject
-	EventRepository eventRepo;
 
 	@Override
 	public Event calculateTotalAmount(Event event) {

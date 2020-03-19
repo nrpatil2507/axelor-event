@@ -10,6 +10,7 @@ import com.axelor.rpc.ActionResponse;
 import java.math.BigDecimal;
 
 public class EventRegistrationController {
+	
 	public void setAmount(ActionRequest request, ActionResponse response) throws Exception {
 		EventRegistration eventRegistration = request.getContext().asType(EventRegistration.class);
 		Event event = checkEvent(request, response);

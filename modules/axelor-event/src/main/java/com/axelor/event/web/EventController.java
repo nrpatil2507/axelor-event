@@ -17,7 +17,7 @@ public class EventController {
   public void checkBeforeDays(ActionRequest request, ActionResponse response) throws Exception {
     Discount discount = request.getContext().asType(Discount.class);
     Event event = request.getContext().getParent().asType(Event.class);
-    if (Beans.get(EventService.class).validateBeforeDays(event, discount) == false) {
+    if (!Beans.get(EventService.class).validateBeforeDays(event, discount)) {
       response.setError("Invalid Before days");
     }
   }

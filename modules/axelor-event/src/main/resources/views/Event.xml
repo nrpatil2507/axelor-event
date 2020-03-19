@@ -8,7 +8,7 @@
     onSave="action-event-record-set-total-entry,action-check-condition-on-new-registration,action-event-method-set-calculated-amount">
     <toolbar>
       <button name="importBtn" title="Import Registration" icon="fa-print"
-        onClick="action-event-registration-view-open-import-wizard" hideIf="!id" />
+        onClick="action-event-registration-view-open-import-wizard" readonlyIf="!id" />
       <button name="sendEmailBtn" title="Send Email" icon="fa-envelope"
         hideIf="!id" onClick="action-event-method-send-email,save" />
       <button name="printReportBtn" title="Print Report" icon="fa-print"
