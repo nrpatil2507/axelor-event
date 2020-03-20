@@ -5,10 +5,11 @@
 
   <form name="event-form" title="Event" model="com.axelor.event.db.Event"
     width="large"
-    onSave="action-event-record-set-total-entry,action-check-condition-on-new-registration,action-event-method-set-calculated-amount">
+    onSave="action-check-condition-on-new-registration,action-event-method-set-calculated-amount"
+    onLoad="action-event-method-set-calculated-amount,save">
     <toolbar>
       <button name="importBtn" title="Import Registration" icon="fa-print"
-        onClick="action-event-registration-view-open-import-wizard" readonlyIf="!id" />
+        onClick="action-event-registration-view-open-import-wizard"  hideIf="!id" />
       <button name="sendEmailBtn" title="Send Email" icon="fa-envelope"
         hideIf="!id" onClick="action-event-method-send-email,save" />
       <button name="printReportBtn" title="Print Report" icon="fa-print"
@@ -16,14 +17,14 @@
     </toolbar>
     <panel title="Event Detail">
       <field name="reference" required="true" />
-      <field name="startDate" onChange="action-event-condition-date-check" />
-      <field name="endDate" onChange="action-event-condition-date-check" />
+      <field name="startDate" required="true" onChange="action-event-condition-date-check" />
+      <field name="endDate" required="true" onChange="action-event-condition-date-check" />
       <field name="venue" />
-      <field name="registrationOpen" onChange="action-event-condition-date-check,action-event-condition-registration-date" />
-      <field name="registrationClose" onChange="action-event-condition-date-check,action-event-condition-registration-date" />
+      <field name="registrationOpen" required="true" onChange="action-event-condition-date-check,action-event-condition-registration-date" />
+      <field name="registrationClose" required="true" onChange="action-event-condition-date-check,action-event-condition-registration-date" />
       <field name="capacity"
         onChange="action-event-condition-check-capacity,action-check-condition-on-new-registration" />
-      <field name="eventFees" />
+      <field name="eventFees" onChange="action-event-method-set-discount" />
     </panel>
     <panel sidebar="true" name="amountPanel">
       <field name="totalEntry" />
@@ -32,8 +33,8 @@
     </panel>
     <panel-related field="discountList" target="com.axelor.event.db.Discount"></panel-related>
     <panel-related field="eventRegistrationList" canNew="totalEntry &lt; capacity"
-      grid-view="event-event-registration-grid" target="com.axelor.event.db.EventRegistration"
-      onChange="action-event-record-set-total-entry,action-event-method-set-calculated-amount"
+      grid-view="event-event-registration-grid" form-view="event-registration-form" target="com.axelor.event.db.EventRegistration"
+      onChange="action-event-method-set-calculated-amount"
       onNew="action-check-condition-on-new-registration">
     </panel-related>
 
@@ -94,13 +95,6 @@
     </panel>
   </form>
 
-  <action-record name="action-event-record-set-total-entry"
-    model="com.axelor.event.db.Event">
-    <field name="totalEntry" expr="eval:eventRegistrationList.size()"
-      if="eventRegistrationList !=null" />
-    <field name="totalEntry" expr="0" if="eventRegistrationList == null" />
-  </action-record>
-
   <action-condition name="action-event-condition-date-check">
     <check field="startDate" if="endDate !=null &amp;&amp; startDate &gt; endDate"
       error="Event Start Date must before from Event End Date" />
@@ -117,6 +111,7 @@
       error="Registration Close date must be before Event start date" />
 
   </action-condition>
+  
   <action-condition name="action-event-condition-registration-date">
   <check field="registrationClose" error="Registration Close Date must be after from Registration Open Date" if="registrationOpen != null &amp;&amp; registrationClose != null &amp;&amp; registrationClose &lt; registrationOpen"/>
   <check field="registrationOpen" error="Registration Open Date must before from Registration Close Date" if="registrationClose != null &amp;&amp; registrationOpen!= null &amp;&amp; registrationOpen.isAfter(registrationClose)"/>
@@ -154,6 +149,10 @@
 
   <action-method name="action-event-method-send-email">
     <call class="com.axelor.event.web.EventMessageController" method="sendMailAll" />
+  </action-method>
+  
+  <action-method name="action-event-method-set-discount">
+  <call class="com.axelor.event.web.EventController" method="updateDiscount"/>
   </action-method>
 
   <action-report output="event${date}"

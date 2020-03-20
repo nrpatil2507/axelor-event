@@ -5,6 +5,7 @@ import com.axelor.event.db.Event;
 import com.axelor.event.db.EventRegistration;
 import com.axelor.event.db.repo.EventRepository;
 import com.axelor.event.exception.IException;
+import com.axelor.i18n.I18n;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import java.math.BigDecimal;
@@ -15,7 +16,7 @@ import org.apache.commons.collections.CollectionUtils;
 public class EventRegistrationServiceImpl implements EventRegistrationService {
 	@Inject
 	EventRepository eventRepo;
-
+	
 	@Override
 	public BigDecimal setAmount(Event event, EventRegistration eventRegistration) throws Exception {
 		LocalDate registrationCloseDate = event.getRegistrationClose();
@@ -49,7 +50,7 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
 				return true;
 			}
 		} else {
-			throw new Exception(IException.MISSING_REGISTRATION_DATES);
+			throw new Exception(I18n.get(IException.MISSING_REGISTRATION_DATES));
 		}
 	}
 
@@ -69,13 +70,13 @@ public class EventRegistrationServiceImpl implements EventRegistrationService {
 		if (!event.getEventFees().equals(amountToAdd) && !amountToAdd.equals(BigDecimal.ZERO)) {
 			totalDiscount = totalDiscount.add(event.getEventFees().subtract(amountToAdd));
 		}
-		event.setTotalEntry(event.getTotalEntry() + 1);
+		event.setTotalEntry(event.getTotalEntry()+1);
 		amountCollected = amountCollected.add(amountToAdd);
 		event.setTotalDiscount(totalDiscount);
 		event.setAmountCollected(amountCollected);
 		eventRepo.save(event);
 	}
-
+	
 	@Override
 	@Transactional
 	public void removeData(EventRegistration eventRegistration) {

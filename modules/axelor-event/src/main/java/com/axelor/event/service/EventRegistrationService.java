@@ -16,5 +16,4 @@ public interface EventRegistrationService {
   void setTotalAmount(Event event, EventRegistration eventRegistration);
 
   void removeData(EventRegistration eventRegistration);
-
 }

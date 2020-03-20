@@ -2,15 +2,26 @@ package com.axelor.event.web;
 
 import com.axelor.event.db.Event;
 import com.axelor.event.db.EventRegistration;
+import com.axelor.event.db.repo.EventRegistrationRepository;
+import com.axelor.event.db.repo.EventRepository;
 import com.axelor.event.exception.IException;
 import com.axelor.event.service.EventRegistrationService;
+import com.axelor.i18n.I18n;
 import com.axelor.inject.Beans;
 import com.axelor.rpc.ActionRequest;
 import com.axelor.rpc.ActionResponse;
+import com.google.inject.Inject;
+import com.google.inject.persist.Transactional;
+
 import java.math.BigDecimal;
 
 public class EventRegistrationController {
-	
+	@Inject
+	EventRepository eventRepo;
+
+	@Inject
+	EventRegistrationRepository eventRegistrationrepo;
+
 	public void setAmount(ActionRequest request, ActionResponse response) throws Exception {
 		EventRegistration eventRegistration = request.getContext().asType(EventRegistration.class);
 		Event event = checkEvent(request, response);
@@ -23,10 +34,11 @@ public class EventRegistrationController {
 		Event event = checkEvent(request, response);
 		try {
 			if (!Beans.get(EventRegistrationService.class).checkEventRegistrationDate(event, eventRegistration)) {
-				response.addError("registrationDate","Registration date must be between "+event.getRegistrationOpen()+" to "+event.getRegistrationClose());
+				response.addError("registrationDate", "Registration date must be between " + event.getRegistrationOpen()
+						+ " to " + event.getRegistrationClose());
 			}
 		} catch (Exception e) {
-			response.setError(IException.MISSING_REGISTRATION_DATES);
+			response.setError(I18n.get(IException.MISSING_REGISTRATION_DATES));
 		}
 	}
 
@@ -34,19 +46,19 @@ public class EventRegistrationController {
 		EventRegistration eventRegistration = request.getContext().asType(EventRegistration.class);
 		if (eventRegistration.getEmail() != null) {
 			if (!Beans.get(EventRegistrationService.class).checkEmail(eventRegistration)) {
-				response.addError("email", IException.INVALID_EMAIL);
+				response.addError("email", I18n.get(IException.INVALID_EMAIL));
 			}
 		}
 	}
 
 	public void checkEventData(ActionRequest request, ActionResponse response) {
+		EventRegistration eventRegistration = request.getContext().asType(EventRegistration.class);
 		Event event = checkEvent(request, response);
-		if (!Beans.get(EventRegistrationService.class).checkCapacity(event)) {
-			response.setValue("event", " ");
-			response.setValue("registrationDate", " ");
-			response.setValue("email", " ");
-			response.setReload(true);
-			response.addError("event",IException.CAPACITY_EXCEEDS);
+		if (eventRegistration.getId() == null) {
+			if (!Beans.get(EventRegistrationService.class).checkCapacity(event)) {
+				response.setReload(true);
+				response.setError(I18n.get(IException.CAPACITY_EXCEEDS));
+			}
 		}
 	}
 
@@ -63,13 +75,17 @@ public class EventRegistrationController {
 		return event;
 	}
 
+	@Transactional
 	public void updateEventData(ActionRequest request, ActionResponse response) {
 		EventRegistration eventRegistration = request.getContext().asType(EventRegistration.class);
 		Event event = checkEvent(request, response);
 		try {
-			Beans.get(EventRegistrationService.class).setTotalAmount(event, eventRegistration);
+			if (eventRegistration.getId() == null) {
+				Beans.get(EventRegistrationService.class).setTotalAmount(event, eventRegistration);
+			}
 		} catch (Exception e) {
 			response.setError(e.getMessage());
 		}
 	}
+
 }

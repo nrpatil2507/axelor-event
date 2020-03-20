@@ -8,17 +8,23 @@ import com.axelor.rpc.ActionRequest;
 import com.axelor.rpc.ActionResponse;
 
 public class EventController {
-  public void calculateAmounts(ActionRequest request, ActionResponse response) {
-    Event event = request.getContext().asType(Event.class);
-    event = Beans.get(EventService.class).calculateTotalAmount(event);
-    response.setValues(event);
-  }
+	public void calculateAmounts(ActionRequest request, ActionResponse response) {
+		Event event = request.getContext().asType(Event.class);
+		event = Beans.get(EventService.class).calculateTotalAmount(event);
+		response.setValues(event);
+	}
 
-  public void checkBeforeDays(ActionRequest request, ActionResponse response) throws Exception {
-    Discount discount = request.getContext().asType(Discount.class);
-    Event event = request.getContext().getParent().asType(Event.class);
-    if (!Beans.get(EventService.class).validateBeforeDays(event, discount)) {
-      response.setError("Invalid Before days");
-    }
-  }
+	public void checkBeforeDays(ActionRequest request, ActionResponse response) throws Exception {
+		Discount discount = request.getContext().asType(Discount.class);
+		Event event = request.getContext().getParent().asType(Event.class);
+		if (!Beans.get(EventService.class).validateBeforeDays(event, discount)) {
+			response.setError("Invalid Before days");
+		}
+	}
+
+	public void updateDiscount(ActionRequest request, ActionResponse response) {
+		Event event = request.getContext().asType(Event.class);
+		event = Beans.get(EventService.class).updateDiscount(event);
+		response.setValue("discountList", event.getDiscountList());
+	}
 }

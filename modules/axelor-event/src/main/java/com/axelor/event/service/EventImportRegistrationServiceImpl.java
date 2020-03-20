@@ -3,6 +3,7 @@ package com.axelor.event.service;
 import com.axelor.data.csv.CSVImporter;
 import com.axelor.event.db.EventRegistration;
 import com.axelor.event.exception.IException;
+import com.axelor.i18n.I18n;
 import com.axelor.inject.Beans;
 import com.axelor.meta.MetaFiles;
 import com.axelor.meta.db.MetaFile;
@@ -71,13 +72,13 @@ public class EventImportRegistrationServiceImpl {
 								eventRegistration);
 						return eventRegistration;
 					} else {
-						System.err.println(IException.INVALID_REGISTRATION_DATE);
+						System.err.println(I18n.get(IException.INVALID_REGISTRATION_DATE));
 					}
 				} else {
-					System.err.println(IException.INVALID_EMAIL);
+					System.err.println(I18n.get(IException.INVALID_EMAIL));
 				}
 			} else {
-				System.err.println(IException.CAPACITY_EXCEEDS);
+				System.err.println(I18n.get(IException.CAPACITY_EXCEEDS));
 			}
 		} catch (Exception e) {
 			System.out.println("Error Occure when importing Data : {}");

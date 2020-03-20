@@ -29,6 +29,7 @@
 <attribute name="hidden" for="event" expr="eval:__parent__"/>
 </action-attrs>
 
+
 <action-method name="action-event-registration-method-set-amount">
 <call class="com.axelor.event.web.EventRegistrationController" method="setAmount"/>
 </action-method>
@@ -44,5 +45,6 @@
 <action-method name="action-event-registration-method-check-valid-registration">
 <call class="com.axelor.event.web.EventRegistrationController" method="checkEventData"/>
 </action-method>
+
 
 </object-views>

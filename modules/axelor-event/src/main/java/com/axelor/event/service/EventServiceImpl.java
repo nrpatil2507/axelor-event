@@ -5,6 +5,8 @@ import com.axelor.event.db.Event;
 import com.axelor.event.db.EventRegistration;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EventServiceImpl implements EventService {
 
@@ -24,12 +26,13 @@ public class EventServiceImpl implements EventService {
 				}
 				totalAmount = totalAmount.add(eventRegistration.getAmount());
 			}
+			event.setTotalEntry(event.getEventRegistrationList().size());
 			event.setTotalDiscount(totalDiscount);
 			event.setAmountCollected(totalAmount);
 		}
 		return event;
 	}
-
+	
 	@Override
 	public Boolean validateBeforeDays(Event event, Discount discount) throws Exception {
 		if (event.getRegistrationOpen() == null || event.getRegistrationClose() == null) {
@@ -42,5 +45,22 @@ public class EventServiceImpl implements EventService {
 			return false;
 		}
 		return true;
+	}
+	@Override
+	public Event updateDiscount(Event event)
+	{
+		if (event.getDiscountList() != null) {
+			List<Discount> discountList = event.getDiscountList();
+			List<Discount> updatedDiscountList = new ArrayList<>();
+
+			for (Discount discount : discountList) {
+				discount.setDiscountAmount(
+						event.getEventFees().multiply(discount.getDiscountPercent()).divide(new BigDecimal(100)));
+				updatedDiscountList.add(discount);
+			}
+			event.setDiscountList(updatedDiscountList);
+		}
+		event = calculateTotalAmount(event);
+		return event;
 	}
 }

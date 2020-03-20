@@ -6,11 +6,11 @@
   <form name="event-registration-form" title="Event registration"
     model="com.axelor.event.db.EventRegistration" onSave="action-event-registration-method-check-valid-registration,action-event-registration-method-update-data"  onNew="action-event-registration-attrs-hide-event" onLoad="action-event-registration-attrs-hide-event">
     <panel title="Overview">
-      <field name="event" onChange="action-event-registration-method-check-valid-registration"/>
+      <field name="event" form-view="event-form" onChange="action-event-registration-method-check-valid-registration,action-event-registration-set-date-null-on-exceed-capacity"/>
       <field name="name" />
       <field name="email" onChange="action-event-registration-method-check-email"/>
       <field name="address" />
-      <field name="registrationDate" required="true" onChange="action-event-registration-method-check-registration-date,action-event-registration-method-set-amount"/>
+      <field name="registrationDate" required="true" onChange="action-event-registration-condition-check-event-isnull,action-event-registration-method-check-registration-date,action-event-registration-method-set-amount"/>
       <field name="amount"/>
     </panel>
   </form>
@@ -37,6 +37,14 @@
 <action-attrs name="action-event-registration-attrs-hide-event">
 <attribute name="hidden" for="event" expr="eval:__parent__"/>
 </action-attrs>
+
+<action-attrs name="action-event-registration-set-date-null-on-exceed-capacity">
+<attribute name="value" for="registrationDate" expr=""/>
+</action-attrs>
+
+<action-condition name="action-event-registration-condition-check-event-isnull">
+<check field="event" if="!__parent__ &amp;&amp; event==null" error="Please select any event"/>
+</action-condition>
 
 <action-method name="action-event-registration-method-set-amount">
 <call class="com.axelor.event.web.EventRegistrationController" method="setAmount"/>
