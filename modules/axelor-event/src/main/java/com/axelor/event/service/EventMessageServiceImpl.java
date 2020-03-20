@@ -39,6 +39,8 @@ public class EventMessageServiceImpl {
 				}
 			}
 		}
+		if(emailAddressList !=null)
+		{
 		EmailAccount mailAccount = Beans.get(EmailAccountRepository.class).all().filter("self.isDefault=true")
 				.fetchOne();
 		if (mailAccount != null) {
@@ -46,6 +48,7 @@ public class EventMessageServiceImpl {
 					"Registration for Event " + event.getReference() + " is SuccessFull", null, null, emailAddressList,
 					null, null, null, null, MessageRepository.MEDIA_TYPE_EMAIL, mailAccount);
 			messageService.sendByEmail(message);
+		}
 		}
 	}
 }

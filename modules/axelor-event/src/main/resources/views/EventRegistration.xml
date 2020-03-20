@@ -5,7 +5,7 @@
 
   <form name="event-registration-form" title="Event registration"
     model="com.axelor.event.db.EventRegistration" onSave="action-event-registration-method-check-valid-registration,action-event-registration-method-update-data"  onNew="action-event-registration-attrs-hide-event" onLoad="action-event-registration-attrs-hide-event">
-    <panel title="Overview">
+    <panel title="Event Registration Detail">
       <field name="event" form-view="event-form" onChange="action-event-registration-method-check-valid-registration,action-event-registration-set-date-null-on-exceed-capacity"/>
       <field name="name" />
       <field name="email" onChange="action-event-registration-method-check-email"/>

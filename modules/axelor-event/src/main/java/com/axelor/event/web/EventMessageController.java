@@ -24,7 +24,7 @@ public class EventMessageController {
       response.setReload(true);
       response.setFlash("Email Send successfully");
     } catch (AxelorException e) {
-      response.setFlash("Something went wrong...!!");
+      response.setFlash("No Recipient Found...!!");
     }
   }
 }

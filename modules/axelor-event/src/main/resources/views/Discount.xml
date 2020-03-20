@@ -4,7 +4,7 @@
   xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.2.xsd">
 
   <form name="discount-form" title="Discount" model="com.axelor.event.db.Discount">
-    <panel title="Overview">
+    <panel title="Discount Detail">
       <field name="beforeDays" onChange="action-discount-method-check-beforeddays"/>
       <field name="discountPercent" onChange="action-discount-record-set-discount-amout"/>
       <field name="discountAmount" />
